@@ -18,7 +18,6 @@
     "variables": {
         "functionBaseName": "[concat(parameters('functionPrefix'), parameters('functionBaseName'))]",
         "name": "[concat(variables('functionBaseName'), parameters('functionSuffix'))]",
-        "hostingPlanName": "[concat(variables('functionBaseName'), '-hosting')]",
         "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
         "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]"
     },
@@ -31,7 +30,6 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('microsoft.insights/components/', variables('applicationInsightsName'))]",
-                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
             ],
             "properties": {
@@ -63,26 +61,7 @@
                             "value": "[toLower(variables('name'))]"
                         }
                     ]
-                },
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
-            }
-        },
-        {
-            "apiVersion": "2018-11-01",
-            "name": "[variables('hostingPlanName')]",
-            "type": "Microsoft.Web/serverfarms",
-            "location": "[resourceGroup().location]",
-            "kind": "",
-            "tags": {},
-            "dependsOn": [],
-            "properties": {
-                "name": "[variables('hostingPlanName')]"
-            },
-            "sku": {
-                "name": "Y1",
-                "tier": "Dynamic",
-                "size": "Y1",
-                "family": "Y"
+                }
             }
         },
         {
