@@ -2,16 +2,25 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "functionAppBaseName": {
+        "functionBaseName": {
             "type": "string"
+        },
+        "functionPrefix": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "functionSuffix": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "functions": [],
     "variables": {
-        "name": "[concat(parameters('functionAppBaseName'), '-func')]",
-        "hostingPlanName": "[concat(parameters('functionAppBaseName'), '-hosting')]",
-        "storageAccountName": "[concat(replace(parameters('functionAppBaseName'), '-', ''), 'sta')]",
-        "applicationInsightsName": "[concat(parameters('functionAppBaseName'), '-insights')]"
+        "functionBaseName": "[concat(parameters('functionPrefix'), parameters('functionBaseName'))]",
+        "name": "[concat(variables('functionBaseName'), parameters('functionSuffix'))]",
+        "hostingPlanName": "[concat(variables('functionBaseName'), '-hosting')]",
+        "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
+        "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]"
     },
     "resources": [
         {
