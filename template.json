@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionBaseName": {
+            "type": "string"
+        },
+        "functionPrefix": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "functionSuffix": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "name": "TheFunctionDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/main/func-base.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionBaseName": {
+                        "value": "[parameters('functionBaseName')]"
+                    },
+                    "functionPrefix": {
+                        "value": "[parameters('functionPrefix')]"
+                    },
+                    "functionSuffix": {
+                        "value": "[parameters('functionSuffix')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
