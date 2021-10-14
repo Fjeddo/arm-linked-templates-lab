@@ -48,12 +48,16 @@
                 "value": "dotnet"
             },
             {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[concat('ref:','microsoft.insights/components/', variables('applicationInsightsName'))]"
+            },
+            {
                 "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=','test',';EndpointSuffix=','core.windows.net')]"
             },
             {
                 "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=','test',';EndpointSuffix=','core.windows.net')]"
             },
             {
                 "name": "WEBSITE_CONTENTSHARE",
@@ -82,7 +86,7 @@
                             "count": "[length(variables('defaultAppSettings'))]",
                             "input": {
                                 "name": "[variables('defaultAppSettings')[copyIndex('appSettings')].name]",
-                                "value": "[variables('defaultAppSettings')[copyIndex('appSettings')].value]"
+                                "value": "[if(startsWith(variables('defaultAppSettings')[copyIndex('appSettings')].value, 'ref:'), reference(substring(variables('defaultAppSettings')[copyIndex('appSettings')].value, 3), '2015-05-01').InstrumentationKey, variables('defaultAppSettings')[copyIndex('appSettings')].value)]"
                             }
                         }
                     ]
