@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rg": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"            
+        },
+        "name": {
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [],
+    "outputs": {
+        "value": {
+            "type": "string",
+            "value": "[reference(resourceId(subscription().subscriptionId, parameters('rg'), 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey]"
+        },
+        "resourceId": {
+            "type": "string",
+            "value": "[resourceId(subscription().subscriptionId, parameters('rg'), 'Microsoft.Insights/components', parameters('name'))]"
+        }
+    }
+}
