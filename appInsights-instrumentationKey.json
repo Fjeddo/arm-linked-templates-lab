@@ -14,7 +14,7 @@
     "variables": {},
     "resources": [],
     "outputs": {
-        "value": {
+        "key": {
             "type": "string",
             "value": "[reference(resourceId(subscription().subscriptionId, parameters('rg'), 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey]"
         },
