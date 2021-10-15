@@ -30,6 +30,13 @@
         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": {
             "type": "string",
             "value": "[concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')]"
+        },
+        "Test123" :{
+            "type": "object",
+            "value": {
+                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+            }
         }
     }
 }
