@@ -23,7 +23,9 @@
         "functionBaseName": "[concat(parameters('functionPrefix'), parameters('functionBaseName'))]",
         "name": "[concat(variables('functionBaseName'), parameters('functionSuffix'))]",
         "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
-        "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]"
+        "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]",
+
+        "FUNCTIONS_EXTENSION_VERSION": {"name":"FUNCTIONS_EXTENSION_VERSION","value":"~3"}
     },
     "resources": [
         {
@@ -33,8 +35,7 @@
             "kind": "functionapp",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'appInsightsInstrumentationKey')]",
-                "[resourceId('microsoft.insights/components', variables('applicationInsightsName'))]",
+                "[resourceId('Microsoft.Resources/deployments', 'appInsights')]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
@@ -42,22 +43,8 @@
                 "siteConfig": {
                     "appSettings": "[union(parameters('functionCustomAppSettings'), 
                     createArray(
-                        json('{\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"}'),                         json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'),                         json(reference('appInsightsInstrumentationKey').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value),                         json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                         json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                         json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
+                        json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'),                                                 json(reference('appInsights').outputs.InstrumentationKey.value),                                                 json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                                                json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                                                 json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
                 }
-            }
-        },
-        {
-            "apiVersion": "2020-02-02",
-            "name": "[variables('applicationInsightsName')]",
-            "type": "microsoft.insights/components",
-            "location": "[resourceGroup().location]",
-            "kind": "other",
-            "properties": {
-                "ApplicationId": "[variables('name')]",
-                "Request_Source": "IbizaWebAppExtensionCreate",
-                "Flow_Type": "Redfield",
-                "Application_Type": "other",
-                "RetentionInDays": 90
             }
         },
         {
@@ -75,7 +62,7 @@
             }
         },
         {
-            "name": "appInsightsInstrumentationKey",
+            "name": "appInsights",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
             "properties": {
@@ -84,7 +71,7 @@
                     "scope": "Inner"
                 },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/appInsights-instrumentationKey.json",
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/appInsights.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -92,10 +79,7 @@
                         "value": "[variables('applicationInsightsName')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[resourceId('microsoft.insights/components', variables('applicationInsightsName'))]"
-            ]
+            }
         }
     ]
 }
