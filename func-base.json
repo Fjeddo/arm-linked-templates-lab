@@ -33,13 +33,14 @@
             "kind": "functionapp",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('microsoft.insights/components/', variables('applicationInsightsName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+                "[resourceId('Microsoft.Resources/deployments', 'appInsightsInstrumentationKey')]",
+                "[resourceId('microsoft.insights/components', variables('applicationInsightsName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[union(parameters('functionCustomAppSettings'), createArray(json('{\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"}'), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'), json(concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName'))).InstrumentationKey,'\"}')), json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
+                    "appSettings": "[union(parameters('functionCustomAppSettings'), createArray(json('{\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"}'), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'), json(concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference('appInsightsInstrumentationKey').outputs.value,'\"}')), json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
                 }
             }
         },
@@ -70,6 +71,29 @@
                 "supportsHttpsTrafficOnly": true,
                 "minimumTlsVersion": "TLS1_2"
             }
+        },
+        {
+            "name": "appInsightsInstrumentationKey",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/appInsights-instrumentationKey.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('applicationInsightsName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('microsoft.insights/components', variables('applicationInsightsName'))]"
+            ]
         }
     ]
 }
