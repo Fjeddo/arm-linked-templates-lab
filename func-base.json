@@ -74,7 +74,7 @@
     ],
     "outputs": {
         "output1": {
-            "type": "string",
+            "type": "array",
             "value": "[parameters('functionCustomAppSettings')]"
         }
     }
