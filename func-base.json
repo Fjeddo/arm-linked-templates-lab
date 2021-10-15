@@ -35,35 +35,8 @@
     "variables": {
         "functionBaseName": "[concat(parameters('functionPrefix'), parameters('functionBaseName'))]",
         "name": "[concat(variables('functionBaseName'), parameters('functionSuffix'))]",
-        "hostingPlanName": "[concat(variables('functionBaseName'), '-hosting')]",
         "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
-        "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]",
-        "defaultAppSettings": [
-            {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "~3"
-            },
-            {
-                "name": "FUNCTIONS_WORKER_RUNTIME",
-                "value": "dotnet"
-            },
-            {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[concat('ref:','microsoft.insights/components/', variables('applicationInsightsName'))]"
-            },
-            {
-                "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=','test',';EndpointSuffix=','core.windows.net')]"
-            },
-            {
-                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=','test',';EndpointSuffix=','core.windows.net')]"
-            },
-            {
-                "name": "WEBSITE_CONTENTSHARE",
-                "value": "[toLower(variables('name'))]"
-            }
-        ]
+        "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]"
     },
     "resources": [
         {
@@ -74,42 +47,21 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('microsoft.insights/components/', variables('applicationInsightsName'))]",
-                "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
             ],
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "copy": [
-                        {
-                            "name": "appSettings",
-                            "count": "[length(variables('defaultAppSettings'))]",
-                            "input": {
-                                "name": "[variables('defaultAppSettings')[copyIndex('appSettings')].name]",
-                                "value": "[if(startsWith(variables('defaultAppSettings')[copyIndex('appSettings')].value, 'ref:'), reference(substring(variables('defaultAppSettings')[copyIndex('appSettings')].value, 4), '2015-05-01').InstrumentationKey, variables('defaultAppSettings')[copyIndex('appSettings')].value)]"
-                            }
-                        }
-                    ]
-                },
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
-            }
-        },
-        {
-            "apiVersion": "2018-11-01",
-            "name": "[variables('hostingPlanName')]",
-            "type": "Microsoft.Web/serverfarms",
-            "location": "[resourceGroup().location]",
-            "kind": "",
-            "tags": {},
-            "dependsOn": [],
-            "properties": {
-                "name": "[variables('hostingPlanName')]"
-            },
-            "sku": {
-                "name": "Y1",
-                "tier": "Dynamic",
-                "size": "Y1",
-                "family": "Y"
+                    "appSettings": "[union(parameters('appSettings'), 
+                    createArray(
+                        json(concat('\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"')),
+                        json(concat('\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"')),
+                        json(concat('\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey,'\"')),
+                        json(concat('\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')),
+                        json(concat('\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')),
+                        json(concat('\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"'))
+                    ))]"
+                }
             }
         },
         {
