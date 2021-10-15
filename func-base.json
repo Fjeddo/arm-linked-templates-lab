@@ -14,21 +14,8 @@
             "defaultValue": ""
         },
         "dynAppSettings": {
-            "type": "array",
-            "defaultValue": [
-                {
-                    "name": "one",
-                    "value": "ett"
-                },
-                {
-                    "name": "two",
-                    "value": "tva"
-                },
-                {
-                    "name": "three",
-                    "value": "tre"
-                }
-            ]
+            "type": "string",
+            "defaultValue": "[[]"
         }
     },
     "functions": [],
