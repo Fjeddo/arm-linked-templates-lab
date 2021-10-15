@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2021-04-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[parameters('name')]",
+            "location": "[resourceGroup().location]",
+            "kind": "Storage",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "minimumTlsVersion": "TLS1_2"
+            }
+        }
+    ],
+    "outputs": {
+        "AzureWebJobsStorage": {
+            "type": "string",
+            "value": "[concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')]"
+        },
+        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": {
+            "type": "string",
+            "value": "[concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')]"
+        }
+    }
+}
