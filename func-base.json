@@ -18,7 +18,6 @@
             "defaultValue": []
         }
     },
-    "functions": [],
     "variables": {
         "functionBaseName": "[concat(parameters('functionPrefix'), parameters('functionBaseName'))]",
         "name": "[concat(variables('functionBaseName'), parameters('functionSuffix'))]",
@@ -28,7 +27,7 @@
         "FUNCTIONS_EXTENSION_VERSION": {"name": "FUNCTIONS_EXTENSION_VERSION", "value": "~3"},
         "FUNCTIONS_WORKER_RUNTIME": {"name": "FUNCTIONS_WORKER_RUNTIME", "value": "dotnet"},
         "WEBSITE_CONTENTSHARE": {"name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('name'))]"}
-    },
+    },    
     "resources": [
         {
             "apiVersion": "2020-12-01",
@@ -44,7 +43,7 @@
                 "name": "[variables('name')]",
                 "siteConfig": {
                     "appSettings": "[union(parameters('functionCustomAppSettings'), 
-                    createArray(                        json(string(variables('FUNCTIONS_EXTENSION_VERSION'))),                         json(string(variables('FUNCTIONS_WORKER_RUNTIME'))),                                                                         json(string(variables('WEBSITE_CONTENTSHARE'))),                                                                         json(reference('appInsights').outputs.InstrumentationKey.value),                           json(reference('storage').outputs.AzureWebJobsStorage.value),                                                                      json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
+                    createArray( json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json(string(variables('FUNCTIONS_WORKER_RUNTIME'))), json(string(variables('WEBSITE_CONTENTSHARE'))), json(string(reference('storage').outputs.Test123.value)), json(reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), json(reference('storage').outputs.AzureWebJobsStorage.value), json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
                 }
             }
         },
