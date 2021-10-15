@@ -25,7 +25,9 @@
         "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
         "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]",
 
-        "FUNCTIONS_EXTENSION_VERSION": {"name":"FUNCTIONS_EXTENSION_VERSION","value":"~3"}
+        "FUNCTIONS_EXTENSION_VERSION": {"name": "FUNCTIONS_EXTENSION_VERSION", "value": "~3"},
+        "FUNCTIONS_WORKER_RUNTIME": {"name": "FUNCTIONS_WORKER_RUNTIME", "value": "dotnet"},
+        "WEBSITE_CONTENTSHARE": {"name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('name'))]"}
     },
     "resources": [
         {
@@ -36,29 +38,34 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'appInsights')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                "[resourceId('Microsoft.Resources/deployments', 'storage')]"
             ],
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
                     "appSettings": "[union(parameters('functionCustomAppSettings'), 
-                    createArray(
-                        json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'),                                                 json(reference('appInsights').outputs.InstrumentationKey.value),                                                 json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                                                json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')),                                                 json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
+                    createArray(                        json(string(variables('FUNCTIONS_EXTENSION_VERSION'))),                         json(string(variables('FUNCTIONS_WORKER_RUNTIME'))),                                                                         json(string(variables('WEBSITE_CONTENTSHARE'))),                                                                         json(reference('appInsights').outputs.InstrumentationKey.value),                           json(reference('storage').outputs.AzureWebJobsStorage.value),                                                                      json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
                 }
             }
         },
         {
+            "name": "storage",
+            "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "location": "[resourceGroup().location]",
-            "kind": "Storage",
-            "sku": {
-                "name": "Standard_LRS"
-            },
             "properties": {
-                "supportsHttpsTrafficOnly": true,
-                "minimumTlsVersion": "TLS1_2"
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/storage.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('storageAccountName')]"
+                    }
+                }
             }
         },
         {
