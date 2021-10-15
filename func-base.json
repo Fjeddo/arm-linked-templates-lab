@@ -71,11 +71,5 @@
                 "minimumTlsVersion": "TLS1_2"
             }
         }
-    ],
-    "outputs": {
-        "output2": {
-            "type": "array",
-            "value": "[parameters('functionCustomAppSettings')]"
-        }
-    }
+    ]
 }
