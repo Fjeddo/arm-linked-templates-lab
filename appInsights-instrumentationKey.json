@@ -14,9 +14,9 @@
     "variables": {},
     "resources": [],
     "outputs": {
-        "key": {
+        "APPINSIGHTS_INSTRUMENTATIONKEY": {
             "type": "string",
-            "value": "[reference(resourceId(subscription().subscriptionId, parameters('rg'), 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey]"
+            "value": "[concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(resourceId(subscription().subscriptionId, parameters('rg'), 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey,'\"}')]"
         },
         "resourceId": {
             "type": "string",
