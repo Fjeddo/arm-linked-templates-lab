@@ -73,7 +73,7 @@
         }
     ],
     "outputs": {
-        "output1": {
+        "output2": {
             "type": "array",
             "value": "[parameters('functionCustomAppSettings')]"
         }
