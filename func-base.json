@@ -88,9 +88,13 @@
         }
     ],
     "outputs" : {
-        "output2": {
+        "output1": {
             "type": "array",
-            "value": "[union(parameters('functionCustomAppSettings'), createArray(reference('storage').outputs.Test123.value, json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json(string(variables('FUNCTIONS_WORKER_RUNTIME'))), json(string(variables('WEBSITE_CONTENTSHARE'))), json(reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), json(reference('storage').outputs.AzureWebJobsStorage.value), json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
+            "value": "[union(parameters('functionCustomAppSettings'), createArray(reference('storage').outputs.Testing.value, json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json(string(variables('FUNCTIONS_WORKER_RUNTIME'))), json(string(variables('WEBSITE_CONTENTSHARE'))), json(reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), json(reference('storage').outputs.AzureWebJobsStorage.value), json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
+        },
+        "output2": {
+            "type": "object",
+            "value": "[reference('storage').outputs.Testing.value]"
         }
     }
 }
