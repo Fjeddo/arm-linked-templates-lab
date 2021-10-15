@@ -1,0 +1,31 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        }
+    },
+    "functions": [],
+    "resources": [
+        {
+            "apiVersion": "2020-02-02",
+            "name": "[parameters('name')]",
+            "type": "microsoft.insights/components",
+            "location": "[resourceGroup().location]",
+            "kind": "other",
+            "properties": {
+                "Request_Source": "IbizaWebAppExtensionCreate",
+                "Flow_Type": "Redfield",
+                "Application_Type": "other",
+                "RetentionInDays": 90
+            }
+        }
+    ],
+    "outputs": {
+        "InstrumentationKey": {
+            "type": "string",
+            "value": "[concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey,'\"}')]"
+        }
+    }
+}
