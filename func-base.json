@@ -52,15 +52,7 @@
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[union(parameters('appSettings'), 
-                    createArray(
-                        json(concat('\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"')),
-                        json(concat('\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"')),
-                        json(concat('\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey,'\"')),
-                        json(concat('\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')),
-                        json(concat('\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')),
-                        json(concat('\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"'))
-                    ))]"
+                    "appSettings": "[union(parameters('appSettings'), createArray(json(concat('\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"')), json(concat('\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"')), json(concat('\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey,'\"')), json(concat('\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')), json(concat('\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"')), json(concat('\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"'))))]"
                 }
             }
         },
