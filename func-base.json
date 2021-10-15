@@ -24,10 +24,21 @@
         "storageAccountName": "[replace(concat(variables('functionBaseName'), 'sta'), '-', '')]",
         "applicationInsightsName": "[concat(variables('functionBaseName'), '-insights')]",
 
-        "FUNCTIONS_EXTENSION_VERSION": {"name": "FUNCTIONS_EXTENSION_VERSION", "value": "~3"},
-        "FUNCTIONS_WORKER_RUNTIME": {"name": "FUNCTIONS_WORKER_RUNTIME", "value": "dotnet"},
-        "WEBSITE_CONTENTSHARE": {"name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('name'))]"}
-    },    
+        "FUNC_DEFAULTS": {
+            "FUNCTIONS_EXTENSION_VERSION": {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+            },
+            "FUNCTIONS_WORKER_RUNTIME": {
+                "name": "FUNCTIONS_WORKER_RUNTIME",
+                "value": "dotnet"
+            },
+            "WEBSITE_CONTENTSHARE": {
+                "name": "WEBSITE_CONTENTSHARE",
+                "value": "[toLower(variables('name'))]"
+            }
+        }
+    },
     "resources": [
         {
             "apiVersion": "2020-12-01",
@@ -42,7 +53,15 @@
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[union(parameters('functionCustomAppSettings'), createArray(reference('storage').outputs.Testing.value, json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json(string(variables('FUNCTIONS_WORKER_RUNTIME'))), json(string(variables('WEBSITE_CONTENTSHARE'))), json(reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), json(reference('storage').outputs.AzureWebJobsStorage.value), json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
+                    "appSettings": "[union(
+                        parameters('functionCustomAppSettings'), 
+                        createArray(
+                            reference('storage').outputs.AzureWebJobsStorage.value, 
+                            reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value, 
+                            reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value),
+                            variables('FUNC_DEFAULTS').FUNCTIONS_EXTENSION_VERSION, 
+                            variables('FUNC_DEFAULTS').FUNCTIONS_WORKER_RUNTIME, 
+                            variables('FUNC_DEFAULTS').WEBSITE_CONTENTSHARE)]"
                 }
             }
         },
@@ -86,15 +105,5 @@
                 }
             }
         }
-    ],
-    "outputs" : {
-        "output1": {
-            "type": "array",
-            "value": "[union(parameters('functionCustomAppSettings'), createArray(reference('storage').outputs.Testing.value, json(string(variables('FUNCTIONS_EXTENSION_VERSION'))), json(string(variables('FUNCTIONS_WORKER_RUNTIME'))), json(string(variables('WEBSITE_CONTENTSHARE'))), json(reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), json(reference('storage').outputs.AzureWebJobsStorage.value), json(reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value)))]"
-        },
-        "output2": {
-            "type": "object",
-            "value": "[reference('storage').outputs.Testing.value]"
-        }
-    }
+    ]
 }
