@@ -40,7 +40,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2020-12-01",
             "name": "[variables('name')]",
             "type": "Microsoft.Web/sites",
             "kind": "functionapp",
@@ -52,7 +52,7 @@
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[union(parameters('dynAppSettings'), createArray(json('{\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"}'), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'), json(concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName')), '2015-05-01').InstrumentationKey,'\"}')), json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
+                    "appSettings": "[union(parameters('dynAppSettings'), createArray(json('{\"name\": \"FUNCTIONS_EXTENSION_VERSION\", \"value\": \"~3\"}'), json('{\"name\": \"FUNCTIONS_WORKER_RUNTIME\", \"value\": \"dotnet\"}'), json(concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(concat('microsoft.insights/components/', variables('applicationInsightsName'))).InstrumentationKey,'\"}')), json(concat('{\"name\": \"AzureWebJobsStorage\", \"value\": \"', concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING\", \"value\": \"',concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net'),'\"}')), json(concat('{\"name\": \"WEBSITE_CONTENTSHARE\", \"value\": \"', toLower(variables('name')),'\"}'))))]"
                 }
             }
         },
@@ -71,7 +71,7 @@
             }
         },
         {
-            "apiVersion": "2019-06-01",
+            "apiVersion": "2021-04-01",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccountName')]",
             "location": "[resourceGroup().location]",
