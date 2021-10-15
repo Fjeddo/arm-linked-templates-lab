@@ -23,8 +23,11 @@
     ],
     "outputs": {
         "APPINSIGHTS_INSTRUMENTATIONKEY": {
-            "type": "string",
-            "value": "[concat('{\"name\": \"APPINSIGHTS_INSTRUMENTATIONKEY\", \"value\": \"', reference(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey,'\"}')]"
+            "type": "object",
+            "value": {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey]"
+            }
         }
     }
 }
