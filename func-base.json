@@ -53,15 +53,7 @@
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[union(
-                        parameters('functionCustomAppSettings'), 
-                        createArray(
-                            reference('storage').outputs.AzureWebJobsStorage.value, 
-                            reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value, 
-                            reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value),
-                            variables('FUNC_DEFAULTS').FUNCTIONS_EXTENSION_VERSION, 
-                            variables('FUNC_DEFAULTS').FUNCTIONS_WORKER_RUNTIME, 
-                            variables('FUNC_DEFAULTS').WEBSITE_CONTENTSHARE)]"
+                    "appSettings": "[union(parameters('functionCustomAppSettings'), createArray(reference('storage').outputs.AzureWebJobsStorage.value, reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value, reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value), variables('FUNC_DEFAULTS').FUNCTIONS_EXTENSION_VERSION, variables('FUNC_DEFAULTS').FUNCTIONS_WORKER_RUNTIME, variables('FUNC_DEFAULTS').WEBSITE_CONTENTSHARE)]"
                 }
             }
         },
