@@ -72,5 +72,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "output1": {
+            "type": "string",
+            "value": "[parameters('functionCustomAppSettings')]"
+        }
+    }
 }
