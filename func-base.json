@@ -32,9 +32,7 @@
             "kind": "functionapp",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'appSettingsBuilder')]",
-                "[resourceId('Microsoft.Resources/deployments', 'appInsights')]",
-                "[resourceId('Microsoft.Resources/deployments', 'storage')]"
+                "[resourceId('Microsoft.Resources/deployments', 'appSettingsBuilder')]"
             ],
             "properties": {
                 "name": "[variables('name')]",
@@ -87,6 +85,10 @@
             "name": "appSettingsBuilder",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'appInsights')]",
+                "[resourceId('Microsoft.Resources/deployments', 'storage')]"
+            ],
             "properties": {
                 "expressionEvaluationOptions": {
                     "scope": "inner"
