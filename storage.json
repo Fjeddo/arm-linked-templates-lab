@@ -24,18 +24,13 @@
     ],
     "outputs": {
         "AzureWebJobsStorage": {
-            "type": "object",
-            "value": {
-                "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
-            }
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+
         },
         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": {
-            "type": "object",
-            "value": {
-                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
-            }
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
         }
     }
 }
