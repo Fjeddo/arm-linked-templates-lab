@@ -32,6 +32,7 @@
             "kind": "functionapp",
             "location": "[resourceGroup().location]",
             "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'appSettingsBuilder')]",
                 "[resourceId('Microsoft.Resources/deployments', 'appInsights')]",
                 "[resourceId('Microsoft.Resources/deployments', 'storage')]"
             ],
