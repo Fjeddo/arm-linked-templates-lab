@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "functionBaseName": {
+        "functionPrefix": {
             "type": "string"
         },
-        "functionPrefix": {
+        "functionBaseName": {
             "type": "string",
             "defaultValue": ""
-        },
+        },        
         "functionSuffix": {
             "type": "string",
             "defaultValue": ""
@@ -16,13 +16,16 @@
     },
     "resources": [
         {
-            "name": "TheFunctionDeployment",
+            "name": "TheTemplatedFunctionDeployment",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
             "properties": {
                 "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/main/func-base.json",
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/func-base.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -34,10 +37,21 @@
                     },
                     "functionSuffix": {
                         "value": "[parameters('functionSuffix')]"
+                    },
+                    "functionCustomAppSettings": {
+                        "value": [
+                            {
+                                "name": "SomeFuncUrl",
+                                "value": "https://www.test.com"
+                            },
+                            {
+                                "name": "SomeOtherFuncUrl",
+                                "value": "https://weather.freddes.se"
+                            }
+                        ]
                     }
                 }
             }
         }
-    ],
-    "outputs": {}
+    ]
 }
