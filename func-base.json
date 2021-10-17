@@ -16,35 +16,6 @@
         "functionCustomAppSettings": {
             "type": "array",
             "defaultValue": []
-        },
-        "functionDefaultAppSettings": {
-            "type": "array",
-            "defaultValue": [
-                {
-                    "name": "FUNCTIONS_EXTENSION_VERSION",
-                    "value": "~3"
-                },
-                {
-                    "name": "FUNCTIONS_WORKER_RUNTIME",
-                    "value": "dotnet"
-                },
-                {
-                    "name": "WEBSITE_CONTENTSHARE",
-                    "value": "[toLower(variables('name'))]"
-                },
-                {
-                    "name": "AzureWebJobsStorage",
-                    "value": "[reference('storage').outputs.AzureWebJobsStorage.value]"
-                },
-                {
-                    "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                    "value": "[reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value]"
-                },
-                {
-                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                    "value": "[reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value]"
-                }
-            ]
         }
     },
     "variables": {
@@ -120,10 +91,53 @@
             ],
             "properties": {
                 "mode": "Complete",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters":{
+                    "functionDefaultAppSettings": {
+                        "value": [
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~3"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTSHARE",
+                                "value": "[toLower(variables('name'))]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('storage').outputs.AzureWebJobsStorage.value]"
+                            },
+                            {
+                                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                                "value": "[reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value]"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value]"
+                            }
+                        ]
+                    },
+                    "functionCustomAppSettings": {
+                        "value": "[parameters('functionCustomAppSettings')]"
+                    }
+                },
                 "template": {
                     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
-                    "parameters": {},
+                    "parameters": {
+                        "functionCustomAppSettings": {
+                            "type": "array"
+                        },
+                        "functionDefaultAppSettings": {
+                            "type": "array"
+                        }
+                    },
                     "resources": [],
                     "outputs": {
                         "build": {
