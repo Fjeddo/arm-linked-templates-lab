@@ -16,6 +16,35 @@
         "functionCustomAppSettings": {
             "type": "array",
             "defaultValue": []
+        },
+        "functionDefaultAppSettings": {
+            "type": "array",
+            "defaultValue": [
+                {
+                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                    "value": "~3"
+                },
+                {
+                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                    "value": "dotnet"
+                },
+                {
+                    "name": "WEBSITE_CONTENTSHARE",
+                    "value": "[toLower(variables('name'))]"
+                },
+                {
+                    "name": "AzureWebJobsStorage",
+                    "value": "[reference('storage').outputs.AzureWebJobsStorage.value]"
+                },
+                {
+                    "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                    "value": "[reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value]"
+                },
+                {
+                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                    "value": "[reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value]"
+                }
+            ]
         }
     },
     "variables": {
@@ -51,7 +80,7 @@
                     "scope": "Inner"
                 },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/storage.json",
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/builder-as-nested/storage.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -71,7 +100,7 @@
                     "scope": "Inner"
                 },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/appInsights.json",
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/builder-as-nested/appInsights.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -90,44 +119,17 @@
                 "[resourceId('Microsoft.Resources/deployments', 'storage')]"
             ],
             "properties": {
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/develop/appSettingsBuilder.json"
-                },
-                "parameters": {
-                    "customAppSettings": {
-                        "value": "[parameters('functionCustomAppSettings')]"
-                    },
-                    "funcDefaults": {
-                        "value": [
-                            {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~3"
-                            },
-                            {
-                                "name": "FUNCTIONS_WORKER_RUNTIME",
-                                "value": "dotnet"
-                            },
-                            {
-                                "name": "WEBSITE_CONTENTSHARE",
-                                "value": "[toLower(variables('name'))]"
-                            },
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[reference('storage').outputs.AzureWebJobsStorage.value]"
-                            },
-                            {
-                                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                                "value": "[reference('storage').outputs.WEBSITE_CONTENTAZUREFILECONNECTIONSTRING.value]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('appInsights').outputs.APPINSIGHTS_INSTRUMENTATIONKEY.value]"
-                            }
-                        ]
+                "mode": "Complete",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [],
+                    "outputs": {
+                        "build": {
+                            "type": "array",
+                            "value": "[union(parameters('functionCustomAppSettings'), parameters('functionDefaultAppSettings'))]"
+                        }
                     }
                 }
             }
