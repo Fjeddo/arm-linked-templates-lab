@@ -90,11 +90,11 @@
                 "[resourceId('Microsoft.Resources/deployments', 'storage')]"
             ],
             "properties": {
-                "mode": "Complete",
+                "mode": "Incremental",
                 "expressionEvaluationOptions": {
-                    "scope": "inner"
+                    "scope": "Inner"
                 },
-                "parameters":{
+                "parameters": {
                     "functionDefaultAppSettings": {
                         "value": [
                             {
