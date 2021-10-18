@@ -26,62 +26,6 @@
     },
     "resources": [
         {
-            "apiVersion": "2020-12-01",
-            "name": "[variables('name')]",
-            "type": "Microsoft.Web/sites",
-            "kind": "functionapp",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'appSettingsBuilder')]"
-            ],
-            "properties": {
-                "name": "[variables('name')]",
-                "siteConfig": {
-                    "appSettings": "[reference('appSettingsBuilder').outputs.build.value]"
-                }
-            }
-        },
-        {
-            "name": "storage",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "properties": {
-                "mode": "Incremental",
-                "expressionEvaluationOptions": {
-                    "scope": "Inner"
-                },
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/builder-as-nested/storage.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "name": {
-                        "value": "[variables('storageAccountName')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "appInsights",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "properties": {
-                "mode": "Incremental",
-                "expressionEvaluationOptions": {
-                    "scope": "Inner"
-                },
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/builder-as-nested/appInsights.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "name": {
-                        "value": "[variables('applicationInsightsName')]"
-                    }
-                }
-            }
-        },
-        {
             "name": "appSettingsBuilder",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
@@ -144,6 +88,120 @@
                             "type": "array",
                             "value": "[union(parameters('functionCustomAppSettings'), parameters('functionDefaultAppSettings'))]"
                         }
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-12-01",
+            "name": "[variables('name')]",
+            "type": "Microsoft.Web/sites",
+            "kind": "functionapp",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'appSettingsBuilder')]"
+            ],
+            "properties": {
+                "name": "[variables('name')]",
+                "siteConfig": {
+                    "appSettings": "[reference('appSettingsBuilder').outputs.build.value]"
+                }
+            }
+        },
+        {
+            "name": "storage",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2021-04-01",
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "name": "[parameters('name')]",
+                            "location": "[resourceGroup().location]",
+                            "kind": "Storage",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            },
+                            "properties": {
+                                "supportsHttpsTrafficOnly": true,
+                                "minimumTlsVersion": "TLS1_2"
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "AzureWebJobsStorage": {
+                            "type": "string",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+
+                        },
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": {
+                            "type": "string",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('name')), '2021-04-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+                        }
+                    }
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "appInsights",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "Inner"
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "apiVersion": "2020-02-02",
+                            "name": "[parameters('name')]",
+                            "type": "microsoft.insights/components",
+                            "location": "[resourceGroup().location]",
+                            "kind": "other",
+                            "properties": {
+                                "Request_Source": "IbizaWebAppExtensionCreate",
+                                "Flow_Type": "Redfield",
+                                "Application_Type": "other",
+                                "RetentionInDays": 90
+                            }
+                        }
+                    ],
+                    "outputs": {
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": {
+                            "type": "string",
+                            "value": "[reference(resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Insights/components', parameters('name')), '2020-02-02').InstrumentationKey]"
+                        }
+                    }
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('applicationInsightsName')]"
                     }
                 }
             }
