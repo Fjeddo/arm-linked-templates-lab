@@ -25,7 +25,7 @@
                     "scope": "Inner"
                 },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/builder-as-nested/func-base.json",
+                    "uri": "https://raw.githubusercontent.com/Fjeddo/arm-linked-templates-lab/all-as-nested/func-base.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
