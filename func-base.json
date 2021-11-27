@@ -16,6 +16,17 @@
         "functionCustomAppSettings": {
             "type": "array",
             "defaultValue": []
+        },
+        "cors": {
+            "type": "object",
+            "defaultValue": {
+                "allowedOrigins": [],
+                "supportCredentials": false
+            }
+        },
+        "hostNameSslStates": { 
+            "type": "array",
+            "defaultValue": []
         }
     },
     "variables": {
@@ -104,8 +115,11 @@
             "properties": {
                 "name": "[variables('name')]",
                 "siteConfig": {
-                    "appSettings": "[reference('appSettingsBuilder').outputs.build.value]"
-                }
+                    "appSettings": "[reference('appSettingsBuilder').outputs.build.value]",
+                    "cors": "[parameters('cors')]"
+                },
+                "httpsOnly": true,
+                "hostNameSslStates": "[parameters('hostNameSslStates')]"
             }
         },
         {
