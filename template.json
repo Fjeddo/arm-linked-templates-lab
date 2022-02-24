@@ -8,7 +8,7 @@
         "functionBaseName": {
             "type": "string",
             "defaultValue": ""
-        },        
+        },
         "functionSuffix": {
             "type": "string",
             "defaultValue": ""
@@ -49,6 +49,12 @@
                                 "value": "https://weather.freddes.se"
                             }
                         ]
+                    },
+                    "cors": {
+                        "value": {
+                            "allowedOrigins": [ "https://test.com" ],
+                            "supportCredentials": true
+                        }
                     }
                 }
             }
