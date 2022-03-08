@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "type": "string"
+        },
+        "storageConnectionString": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aadAppClientId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aadAppTenantId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "allowedUserNames": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "name": "TheFunctionDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/microsoft/DurableFunctionsMonitor/main/durablefunctionsmonitor.dotnetbackend/arm-template.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[parameters('functionAppName')]"
+                    },
+                    "storageConnectionString": {
+                        "value": "[parameters('storageConnectionString')]"
+                    },
+                    "aadAppClientId": {
+                        "value": "[parameters('aadAppClientId')]"
+                    },
+                    "aadAppTenantId": {
+                        "value": "[parameters('aadAppTenantId')]"
+                    },
+                    "allowedUserNames": {
+                        "value": "[parameters('allowedUserNames')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
